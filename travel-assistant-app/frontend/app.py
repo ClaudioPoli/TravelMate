@@ -25,28 +25,70 @@ def stream_itinerary(destination, dates, preferences):
             'dates': dates,
             'preferences': preferences
         }, stream=True)
-        response.raise_for_status()  # Solleva un'eccezione per risposte con status code 4xx/5xx
+        response.raise_for_status()
+        
+        # Crea un placeholder per l'output
+        output_placeholder = st.empty()
+        full_response = ""
+        
+        # Stream e aggiorna il contenuto
         for chunk in response.iter_content(chunk_size=128):
-            st.write(chunk.decode('utf-8'))
+            decoded_chunk = chunk.decode('utf-8')
+            full_response += decoded_chunk
+            # Usa markdown per preservare la formattazione
+            output_placeholder.markdown(full_response)
+            
     except requests.exceptions.RequestException as e:
         st.error(f"Errore nella richiesta: {e}")
 
-st.set_page_config(layout="wide")  # Imposta il layout a larghezza intera
+st.set_page_config(
+    layout="wide",
+    page_title="Travel Itinerary Generator",
+    page_icon="🌍"
+)
 
-st.title("Travel Itinerary Generator")
+# Stile CSS personalizzato
+st.markdown("""
+    <style>
+    .stMarkdown {
+        font-size: 16px;
+        line-height: 1.6;
+    }
+    .stMarkdown ul {
+        margin-left: 20px;
+        margin-bottom: 10px;
+    }
+    .stMarkdown h1, .stMarkdown h2, .stMarkdown h3 {
+        margin-top: 20px;
+        margin-bottom: 10px;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
-destination = st.text_input("Destinazione")
-start_date = st.date_input("Data di inizio")
-end_date = st.date_input("Data di fine")
-preferences = st.text_area("Preferenze di viaggio")
+st.title("🌍 Travel Itinerary Generator")
 
-if st.button("Genera Itinerario"):
-    dates = [start_date.strftime("%Y-%m-%d"), end_date.strftime("%Y-%m-%d")]
-    itinerary = fetch_itinerary(destination, dates, preferences)
-    if itinerary:
-        st.write(itinerary['itinerary'])
+col1, col2 = st.columns(2)
 
-if st.button("Stream Itinerario"):
-    dates = [start_date.strftime("%Y-%m-%d"), end_date.strftime("%Y-%m-%d")]
-    with st.container():  # Utilizza un container per il layout a larghezza intera
-        stream_itinerary(destination, dates, preferences)
+with col1:
+    destination = st.text_input("📍 Destinazione")
+    preferences = st.text_area("✨ Preferenze di viaggio")
+
+with col2:
+    start_date = st.date_input("📅 Data di inizio")
+    end_date = st.date_input("📅 Data di fine")
+
+col3, col4 = st.columns(2)
+
+with col3:
+    if st.button("🚀 Genera Itinerario"):
+        dates = [start_date.strftime("%Y-%m-%d"), end_date.strftime("%Y-%m-%d")]
+        with st.spinner('Generazione itinerario in corso...'):
+            itinerary = fetch_itinerary(destination, dates, preferences)
+            if itinerary:
+                st.markdown(itinerary['itinerary'])
+
+with col4:
+    if st.button("📝 Stream Itinerario"):
+        dates = [start_date.strftime("%Y-%m-%d"), end_date.strftime("%Y-%m-%d")]
+        with st.spinner('Streaming itinerario in corso...'):
+            stream_itinerary(destination, dates, preferences)
