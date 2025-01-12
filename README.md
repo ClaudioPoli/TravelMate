@@ -1,80 +1,102 @@
-# 🌍 TravelMate - Assistente AI per Itinerari di Viaggio
 
-## 📝 Descrizione
-TravelMate è un assistente di viaggio basato su AI che genera itinerari personalizzati in italiano. Utilizza Ollama come modello di linguaggio locale per creare esperienze di viaggio su misura.
+# 🌍 TravelMate - AI-Powered Travel Itinerary Assistant
 
-## 🛠 Stack Tecnologico
+## 📝 Description
+TravelMate is an AI-based travel assistant that generates personalized itineraries in Italian. It uses Ollama as a local language model to create tailored travel experiences.
+
+## 🛠 Tech Stack
 - Frontend: Streamlit
 - Backend: Flask
 - AI: Ollama (LLM)
-- Containerizzazione: Docker
-- Integrazione AI: LangChain
+- Containerization: Docker
+- AI Integration: LangChain
 
-## ⚙️ Prerequisiti
+## ⚙️ Prerequisites
 - macOS (Silicon/Intel)
-- [Homebrew](https://brew.sh/index_it)
-- Docker Desktop per Mac
+- [Homebrew](https://brew.sh)
+- Docker Desktop for Mac
 - Python 3.9+
 - 8GB RAM
-- 20GB spazio disco
+- 20GB disk space
 
+## 🚀 Installation
 
-## 🚀 Installazione
-
-### Installare Ollama
+### Install Ollama
+```bash
 brew install ollama
+```
 
-# Clonare il repository
-git clone https://github.com/tuousername/TravelMate.git
+### Clone the repository
+```bash
+git clone https://github.com/yourusername/TravelMate.git
 cd TravelMate
+```
 
-# Configurare l'ambiente
+### Configure the environment
+```bash
 echo "OLLAMA_BASE_URL=http://host.docker.internal:11434" > .env
+```
 
-# Avviare Ollama
+### Start Ollama
+```bash
 ollama serve
+```
 
-# Scaricare il modello
+### Download the model
+```bash
 ollama pull llama3.2
+```
 
-# 🏃 Avvio
-## Modalità Docker
+## 🏃 Startup
+### Docker Mode
+```bash
 docker compose up --build
+```
 
-# Modalità Sviluppo
-# Terminal 1 - Backend
+### Development Mode
+#### Terminal 1 - Backend
+```bash
 cd travel-assistant-app/backend
 python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 python server.py
+```
 
-# Terminal 2 - Frontend
+#### Terminal 2 - Frontend
+```bash
 cd travel-assistant-app/frontend
 python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 streamlit run app.py
+```
 
-# 🌐 Accesso
-Frontend: http://localhost:8501
-Backend API: http://localhost:5001
+## 🌐 Access
+- Frontend: [http://localhost:8501](http://localhost:8501)
+- Backend API: [http://localhost:5001](http://localhost:5001)
 
-# ✅ Verifica Installazione
+## ✅ Installation Verification
+```bash
 python travel-assistant-app/test/test_ollama_connection.py
+```
 
-# 🔧 Troubleshooting
-## Il Backend non si Connette a Ollama
-# Verifica Ollama
+## 🔧 Troubleshooting
+### Backend does not connect to Ollama
+#### Check Ollama
+```bash
 ps aux | grep ollama
-# Riavvia se necessario
+```
+#### Restart if necessary
+```bash
 killall ollama && ollama serve
+```
 
-📖 Licenza
+## 📖 License
 MIT
 
-🤝 Contributi
+## 🤝 Contributions
 Fork > Feature Branch > PR
 
-💬 Supporto
-Apri una Issue su GitHub 
+## 💬 Support
+Open an Issue on GitHub
