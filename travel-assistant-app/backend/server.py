@@ -54,13 +54,28 @@ def generate_itinerary():
         destination = data['destination']
         dates = data['dates']
         preferences = data['preferences']
-        prompt = f"""
+        address = data.get('address')  # Campo opzionale
+        
+        base_prompt = f"""
         Agisci come un esperto di viaggi italiano e crea un itinerario di viaggio dettagliato in italiano.
         
         Destinazione: {destination}
         Date: dal {dates[0]} al {dates[1]}
         Preferenze: {preferences}
+        """
         
+        if address:
+            base_prompt += f"""
+        Punto di partenza: {address}
+        
+        Considera questo indirizzo come punto di partenza per organizzare le visite giornaliere.
+        Suggerisci i percorsi più efficienti e indica:
+        - Distanze approssimative dal punto di partenza
+        - Mezzi di trasporto consigliati
+        - Tempistiche di spostamento
+        """
+        
+        base_prompt += """
         Fornisci un itinerario giorno per giorno, includendo:
         - Attrazioni da visitare
         - Ristoranti consigliati
@@ -69,8 +84,9 @@ def generate_itinerary():
         
         Rispondi in italiano.
         """
-        logging.debug(f"Generated prompt: {prompt}")
-        response = model.invoke(prompt)
+        
+        logging.debug(f"Generated prompt: {base_prompt}")
+        response = model.invoke(base_prompt)
         logging.debug(f"Model response: {response}")
         return jsonify({'itinerary': response})
     except Exception as e:
@@ -85,13 +101,32 @@ def stream_itinerary():
         destination = data['destination']
         dates = data['dates']
         preferences = data['preferences']
-        prompt = f"""
+        address = data.get('address')
+        times = data.get('times', {})
+        
+        base_prompt = f"""
         Agisci come un esperto di viaggi italiano e crea un itinerario di viaggio dettagliato in italiano.
         
         Destinazione: {destination}
-        Date: dal {dates[0]} al {dates[1]}
+        Date: dal {dates[0]} (arrivo ore {times.get('arrival', 'N/A')}) 
+              al {dates[1]} (partenza ore {times.get('departure', 'N/A')})
         Preferenze: {preferences}
+        """
         
+        if address:
+            base_prompt += f"""
+        Punto di partenza: {address}
+        
+        Considera questo indirizzo come punto di partenza per organizzare le visite giornaliere.
+        Suggerisci i percorsi più efficienti e indica:
+        - Distanze approssimative dal punto di partenza
+        - Mezzi di trasporto consigliati
+        - Tempistiche di spostamento
+        
+        Considera gli orari di arrivo e partenza per ottimizzare il tempo disponibile.
+        """
+        
+        base_prompt += """
         Fornisci un itinerario giorno per giorno, includendo:
         - Attrazioni da visitare
         - Ristoranti consigliati
@@ -99,10 +134,11 @@ def stream_itinerary():
         - Consigli pratici
         
         Rispondi in italiano.
-        """        
-        logging.debug(f"Generated prompt: {prompt}")
+        """
+        
+        logging.debug(f"Generated prompt: {base_prompt}")
         def generate():
-            for chunk in model.stream(prompt):
+            for chunk in model.stream(base_prompt):
                 yield chunk
         return app.response_class(generate(), mimetype='text/plain')
     except Exception as e:
